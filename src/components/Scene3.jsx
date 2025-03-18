@@ -1,13 +1,16 @@
-import { Canvas, useFrame } from "@react-three/fiber";
+import { Canvas, useFrame, useLoader } from "@react-three/fiber";
 import { useRef } from 'react';
-import { OrbitControls, GizmoHelper, GizmoViewcube, GizmoViewport, useHelper } from "@react-three/drei";
+import { OrbitControls, GizmoHelper, GizmoViewcube, GizmoViewport, useHelper, useGLTF } from "@react-three/drei";
 import { useControls } from 'leva'
-import { SpotLightHelper } from 'three'
+import { SpotLightHelper, TextureLoader } from 'three'
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
+//camerahelper om skuggan hamnar utanför
+// Sök på buffers i gltf filen för att byt namn på objektet
 
 function LightWithHelper() {
     const Light = useRef();  
 
-    useHelper(Light, SpotLightHelper, 'orange')
+    useHelper(Light, SpotLightHelper, '#46cc43')
     const {angle, penumbra } = useControls({
         angle: Math.PI / 8,
         penumbra: {
@@ -19,7 +22,10 @@ function LightWithHelper() {
     });
 
     return (
-        <spotLight ref={Light} angle={angle} penumbra={penumbra} intensity={60} color={0xfcfcfc} position={[2, 5, 1]}/>
+        <spotLight ref={Light} angle={angle} penumbra={penumbra} intensity={60} color={0xfcfcfc} 
+        position={[2, 5, 1]}
+        castShadow
+        />
     )
 
 }
@@ -43,7 +49,7 @@ function AnimatedBox(){
     })
   
     return (
-      <mesh ref={boxRef}>
+      <mesh ref={boxRef} castShadow>
       <boxGeometry args={[2, 2, 2]}/>
       <axesHelper args={[10]}/>
       <meshStandardMaterial color={color}/>
@@ -51,11 +57,30 @@ function AnimatedBox(){
     )
   }
   
+function Model() {
+    const result = useLoader(GLTFLoader, '../../public/palm.gltf');
+    return <primitive object={result.scene} position={[0, 2, 0]} />
+} 
+
+function Model2() {
+    const result = useLoader(GLTFLoader, '../../public/scene.gltf');
+    return <primitive object={result.scene} position={[5, 0, 2]} />
+} 
+
+function SphereWithTexture() {
+    const texture = useLoader(TextureLoader, '../../public/textures/bird.jpg');
+    return (
+        <mesh position={[3, 1, 5]}>
+        <sphereGeometry/>
+        <meshStandardMaterial map={texture}/>
+        </mesh>
+    )
+};
 
 function Scene3() {
     return (
         <div>
-        <Canvas>
+        <Canvas shadows>
         <GizmoHelper alignment="bottom-right" margin={[80, 80]}>
         <GizmoViewcube/>
         <GizmoViewport/>
@@ -68,10 +93,14 @@ function Scene3() {
         <OrbitControls/>
         <AnimatedBox/>
         <ambientLight/>
-        {/*<LightWithHelper/> */}
-        <pointLight 
-        intensity={50} 
-        position={[2, 5, 1]}/>
+        <LightWithHelper/>
+        <mesh rotation={[-Math.PI / 2,0,0]} receiveShadow>
+            <planeGeometry args={[20, 20]} />
+            <meshPhongMaterial/>
+        </mesh>
+        <Model/>
+        <Model2/>
+        <SphereWithTexture/>      
         </Canvas>
       </div>
     )
