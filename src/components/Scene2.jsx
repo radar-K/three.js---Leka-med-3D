@@ -1,74 +1,46 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls } from '@react-three/drei';
+import { OrbitControls, useDrag } from '@react-three/drei';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 import * as THREE from 'three';
 
+
+
+
 function Floor() {
-  const position = new THREE.Vector3(0, -1, 3);
-  const scale = new THREE.Vector3(100, 2, 100);
   return (
-    <mesh position={position} scale={scale} receiveShadow>
-      <boxGeometry args={[1, 1, 1]} />
-      <meshPhongMaterial color={0xf9c834} />
+    <mesh position={[0, -1, 3]} scale={[100, 2, 100]}> {/* Scale: Multiplicera objektets ursprungliga storlek.*/}
+      <boxGeometry args={[1, 1, 1]} />                 {/* Ursprungliga storleken på objektets geometri.*/}
+      <meshStandardMaterial color={0xf9c834} />
     </mesh>
   );
 }
 
 function Box() {
-  const scale = new THREE.Vector3(6, 6, 6);
-  const position = new THREE.Vector3(15, scale.y / 2, 15);
-  const meshRef = useRef();
-
-  useEffect(() => {
-    if (meshRef.current) {
-      meshRef.current.userData = { draggable: true }; // Gör objektet flyttbart
-    }
-  }, []);
-
   return (
-    <mesh ref={meshRef} position={position} scale={scale} castShadow receiveShadow>
+    <mesh position={[6, 2, 6]} scale={[6, 6, 6]}>
       <boxGeometry args={[1, 1, 1]} />
       <meshPhongMaterial color={0xDC143C} />
     </mesh>
   );
 }
 
-function Sphere() {
-  const radius = 4;
-  const position = new THREE.Vector3(15, radius, -15);
-  const meshRef = useRef();
-
-  useEffect(() => {
-    if (meshRef.current) {
-      meshRef.current.userData = { draggable: true }; // Gör objektet flyttbart
-    }
-  }, []);
-
+function Cylinder() {
   return (
-    <mesh ref={meshRef} position={position} castShadow receiveShadow>
-      <sphereGeometry args={[radius, 32, 32]} />
-      <meshPhongMaterial color={0x43a1f4} />
+    <mesh position={[-15, 7, 6]} scale={[6, 5, 6]}>
+      <cylinderGeometry args={[1, 1, 3, 32]} />
+      <meshPhongMaterial color={0x90ee90} />
     </mesh>
   );
 }
 
-function Cylinder() {
+function Sphere() {
   const radius = 4;
-  const height = 6;
-  const position = new THREE.Vector3(-15, height / 2, 15);
-  const meshRef = useRef();
-
-  useEffect(() => {
-    if (meshRef.current) {
-      meshRef.current.userData = { draggable: true }; // Gör objektet flyttbart
-    }
-  }, []);
 
   return (
-    <mesh ref={meshRef} position={position} castShadow receiveShadow>
-      <cylinderGeometry args={[radius, radius, height, 32]} />
-      <meshPhongMaterial color={0x90ee90} />
+    <mesh position={[15, radius, -15]}>
+      <sphereGeometry args={[radius, 32, 32]} />
+      <meshPhongMaterial color={0x43a1f4} />
     </mesh>
   );
 }
@@ -147,3 +119,23 @@ function Scene2() {
 }
 
 export default Scene2;
+
+
+// function BoxthreeJs() {
+//   const scale = new THREE.Vector3(6, 6, 6);
+//   const position = new THREE.Vector3(15, scale.y / 2, 15);
+//   const meshRef = useRef();
+
+//   useEffect(() => {
+//     if (meshRef.current) {
+//       meshRef.current.userData = { draggable: true }; // Gör objektet flyttbart
+//     }
+//   }, []);
+
+//   return (
+//     <mesh ref={meshRef} position={position} scale={scale} castShadow receiveShadow>
+//       <boxGeometry args={[1, 1, 1]} />
+//       <meshPhongMaterial color={0xDC143C} />
+//     </mesh>
+//   );
+// }
